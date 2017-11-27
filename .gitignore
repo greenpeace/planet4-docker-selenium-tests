@@ -1,0 +1,6 @@
+# IntelliJ project files
+.idea
+*.iml
+
+variables.env
+\.DS_Store
