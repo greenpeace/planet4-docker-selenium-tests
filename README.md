@@ -34,7 +34,6 @@ Requirements for running this testing environment:
 1. In variables.env change the variables to match the site you want to test.
 1. Build the image and run the container.
     ```bash
-      $ cd planet4-docker-compose
       $ docker build -t planet4-selenium-tests .
       $ docker run --rm --name planet4-tests -p 5900:5900   --env-file variables.env  planet4-selenium-tests
     ```
@@ -50,7 +49,8 @@ Requirements for running this testing environment:
     ```
 1. (Optional) If you need to see the actual browser running the tests, you will need a vnc client. 
  A choice would be ([RealVnc](https://www.realvnc.com/en/connect/download/vnc/)).
- Download and install the vnc client and then you would be able to connect to the container by specifying the address **127.0.0.1:5900** 
+ Download and install the vnc client and then you would be able to connect to the container by specifying the address **127.0.0.1:5900**. 
+ The password to connect is **secret** 
 
 
 ### Environment variables
