@@ -1,4 +1,4 @@
-# Greenpeace Planet4 docker development environment
+# Greenpeace Planet4 selenium tests docker image
 
 ![Planet4](https://cdn-images-1.medium.com/letterbox/300/36/50/50/1*XcutrEHk0HYv-spjnOej2w.png?source=logoAvatar-ec5f4e3b2e43---fded7925f62)
 
