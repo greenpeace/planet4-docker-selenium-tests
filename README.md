@@ -32,12 +32,26 @@ Requirements for running this testing environment:
       $ cp variables.env.example variables.env
     ```
 1. In variables.env change the variables to match the site you want to test.
-1. Build the image and run the container.
+1. Build the image.
     ```bash
       $ docker build -t planet4-selenium-tests .
-      $ docker run --rm --name planet4-tests -p 5900:5900   --env-file variables.env  planet4-selenium-tests
     ```
-1. Connect to container.
+1. You can run the container with either of the below 2 commands.<br> 
+1st option will clone repo inside the container. <br>
+2nd will mount the planet4-selenium-tests from your os. You have to change /path/to/local/planet4-selenium-tests to the path of your local planet4-selenium-tests repo.<br>
+Use 2nd option if you want to be able to edit the repo's files from your os.<br>
+The container will be destroyed after it is stopped.
+    ```bash
+      #1st option
+      $ docker run --rm --name planet4-tests -p 5900:5900   --env-file variables.env  planet4-selenium-tests
+      #2nd option
+      $ docker run --rm --name planet4-tests -p 5900:5900   --env-file variables.env  -v /path/to/local/planet4-selenium-tests:/var/www/tests:rw planet4-selenium-tests   
+    ```    
+1. If the planet4 installation you want to test runs on your local system/os then also run the below command.
+    ```bash
+      $ /add_test_domain_to_hosts.sh       
+    ```    
+1. Connect to the container.
     ```bash
       $ docker container exec -it planet4-tests bash       
     ```
