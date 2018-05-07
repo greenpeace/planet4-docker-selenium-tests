@@ -1,4 +1,4 @@
-FROM selenium/standalone-chrome-debug
+FROM elgalu/selenium
 LABEL author=kyriakos.diamantis@greenpeace.org
 
 ENV PLANET4_SELENIUM_URL https://github.com/greenpeace/planet4-selenium-tests
@@ -32,12 +32,12 @@ RUN apt update && apt -y install \
 RUN echo "root:secret" | chpasswd
 RUN git clone $PLANET4_SELENIUM_URL /var/www/tests
 WORKDIR /var/www/tests
-COPY conf/selenium_config.php /var/www/tests/config/config.php.example
+COPY conf/selenium_config.php /var/www/config.php.example
 COPY bin/entrypoint.sh /entrypoint.sh
 COPY bin/add_test_domain_to_hosts.sh /add_test_domain_to_hosts.sh
 COPY bin/clean_defunct_windows.sh /usr/bin/clean
 RUN chmod 755 /usr/bin/clean && \
-    chown -R seluser:seluser /var/www/tests /entrypoint.sh /add_test_domain_to_hosts.sh
+    chown -R seluser:seluser /var/www/tests /entrypoint.sh /add_test_domain_to_hosts.sh /var/www/config.php.example
 USER seluser
 RUN composer install
 

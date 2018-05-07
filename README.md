@@ -9,7 +9,7 @@ Planet4 is the NEW Greenpeace web platform
 ## What is this repository?
 
 This repository contains a docker image to set up a docker container that contains [planet4-selenium-tests](https://github.com/greenpeace/planet4-selenium-tests) and the needed tools to run these tests.
-The image is based on [selenium/standalone-chrome-debug](https://github.com/SeleniumHQ/docker-selenium)
+The image is based on [elgalu/selenium](https://github.com/elgalu/docker-selenium)
 
 ## How to set up the docker environment
 
@@ -43,18 +43,18 @@ Use 2nd option if you want to be able to edit the repo's files from your os.<br>
 The container will be destroyed after it is stopped.
     ```bash
       #1st option
-      $ docker run --rm --name planet4-tests -p 5900:5900   --env-file variables.env  planet4-selenium-tests
+      $ docker run --rm --shm-size=2g --name planet4-tests -p 5901:25900   --env-file variables.env  planet4-selenium-tests
       #2nd option
-      $ docker run --rm --name planet4-tests -p 5900:5900   --env-file variables.env  -v /path/to/local/planet4-selenium-tests:/var/www/tests:rw planet4-selenium-tests   
-    ```    
-1. If the planet4 installation you want to test runs on your local system/os then also run the below command.
-    ```bash
-      $ /add_test_domain_to_hosts.sh       
-    ```    
+      $ docker run --rm --shm-size=2g --name planet4-tests -p 5901:25900   --env-file variables.env  -v /path/to/local/planet4-selenium-tests:/var/www/tests:rw planet4-selenium-tests
+    ```      
 1. Connect to the container.
     ```bash
       $ docker container exec -it planet4-tests bash       
     ```
+1. If the planet4 installation you want to test runs on your local system/os then also run the below command (inside the container).
+    ```bash
+      $ /add_test_domain_to_hosts.sh       
+    ```  
 1. Inside the container your can run the phpunit tests.
     ```bash
       $ ./run_all_sample.sh # to run all tests
