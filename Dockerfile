@@ -5,7 +5,7 @@ ENV PLANET4_SELENIUM_URL https://github.com/greenpeace/planet4-selenium-tests
 
 USER root
 
-RUN apt update && apt -y install \
+RUN apt-get update && apt-get -y install \
     libmcrypt-dev \
     libxml2 \
     libxml2-dev \
