@@ -1,4 +1,4 @@
-FROM elgalu/selenium
+FROM elgalu/selenium:3.1
 LABEL author=kyriakos.diamantis@greenpeace.org
 
 ENV PLANET4_SELENIUM_URL https://github.com/greenpeace/planet4-selenium-tests
@@ -40,7 +40,6 @@ RUN chmod 755 /usr/bin/clean && \
     chown -R seluser:seluser /var/www/tests /entrypoint.sh /add_test_domain_to_hosts.sh /var/www/config.php.example
 USER seluser
 RUN composer install
-
 
 CMD [ "/entrypoint.sh" ]
 EXPOSE 5900
