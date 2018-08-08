@@ -14,9 +14,20 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: activate-gcloud-account.sh
-      - run: make
+      - run: make build
+      - run: make push
       - run: TYPE="Build" notify-job-success.sh
       - run:
           name: Notify failure
           when: on_fail
           command: notify-job-failure.sh
+
+workflows:
+  version: 2
+  all:
+    jobs:
+      - build-push:
+          context: org-global
+          filters:
+            tags:
+              only: /.*/
