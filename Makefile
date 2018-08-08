@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 BUILD_NAMESPACE ?= gcr.io
 GOOGLE_PROJECT_ID ?= planet-4-151612
 CONTAINER_NAME ?= selenium
