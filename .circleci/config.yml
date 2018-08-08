@@ -1,0 +1,22 @@
+defaults: &defaults
+  environment:
+    GOOGLE_PROJECT_ID: planet-4-151612
+  docker:
+    - image: gcr.io/planet-4-151612/circleci-base:latest
+  working_directory:  /home/circleci/app
+
+version: 2
+
+jobs:
+  build-push:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: activate-gcloud-account.sh
+      - run: make
+      - run: TYPE="Build" notify-job-success.sh
+      - run:
+          name: Notify failure
+          when: on_fail
+          command: notify-job-failure.sh
