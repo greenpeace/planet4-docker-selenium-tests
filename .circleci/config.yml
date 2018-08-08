@@ -15,6 +15,7 @@ jobs:
       - setup_remote_docker
       - run: activate-gcloud-account.sh
       - run: make build
+      - run: gcloud auth configure-docker
       - run: make push
       - run: TYPE="Build" notify-job-success.sh
       - run:
