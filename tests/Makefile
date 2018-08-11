@@ -1,6 +1,8 @@
 PLANET4_USER ?= dev
 PLANET4_USER_PASS ?= u3vsREsvjwo
 
+NGINX_HELPER_JSON := $(shell cat options/rt_wp_nginx_helper_options.json)
+
 ifeq ($(CIRCLECI),true)
 # Configure build variables based on CircleCI environment vars
 BUILD_NUM = build-$(CIRCLE_BUILD_NUM)
@@ -24,16 +26,25 @@ run:
 
 .PHONY: wait
 wait:
-		sh -c "./wait.sh"
+		time ./wait.sh
+		@echo
+		@echo "*** Site ready at http://www.planet4.test"
+		@echo
 
 .PHONY: config
 config:
 		docker-compose exec php-fpm wp rewrite structure /%category%/%post_id%/%postname%/
-		docker-compose exec php-fpm wp user create "$(PLANET4_USER)" noreply@greenpeace.org --role=administrator --user_pass="$(PLANET4_USER_PASS)"
+		docker-compose exec php-fpm wp option set rt_wp_nginx_helper_options '$(NGINX_HELPER_JSON)' --format=json
+		docker-compose exec php-fpm wp user create $(PLANET4_USER) noreply@greenpeace.org --role=administrator --user_pass="$(PLANET4_USER_PASS)"
+		docker-compose exec redis redis-cli flushdb
+		@echo
+		@echo "*** User: $(PLANET4_USER)"
+		@echo "*** Pass: $(PLANET4_USER_PASS)"
+		@echo
 
 .PHONY: test
 test:
 		docker-compose exec test mkdir -p /tmp/test_output
-		docker-compose exec test vendor/bin/phpunit --log-junit /tmp/test_output/junit.xml -c tests
+		time docker-compose exec test vendor/bin/phpunit --verbose --debug --log-junit /tmp/test_output/junit.xml -c tests
 		mkdir -p output
 		docker cp tests_test_1:/tmp/test_output/junit.xml output/junit.xml
