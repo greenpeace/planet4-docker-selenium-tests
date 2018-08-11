@@ -8,48 +8,80 @@ defaults: &defaults
 version: 2
 
 jobs:
-  build-test-push:
+  build:
     <<: *defaults
     steps:
       - checkout
       - setup_remote_docker
       - run: activate-gcloud-account.sh
-      - run: make build
-      - run: make test
-      - store_test_results:
-          path: ~/app/tests/output
-      - store_artifacts:
-          path: ~/app/tests/output
       - run: gcloud auth configure-docker
-      - run: make push
+      - run: mkdir -p /tmp/workspace/var
+      - run: echo "$CIRCLE_BUILD_NUM" > /tmp/workspace/var/circle_build_num
+      - run: make build
+      - run: docker push gcr.io/planet-4-151612/selenium:build-$CIRCLE_BUILD_NUM
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - var
       - run:
           name: Notify failure
           when: on_fail
           command: notify-job-failure.sh
 
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make test
+      - run:
+          name: Notify failure
+          when: on_fail
+          command: TYPE="Test" EXTRA_TEXT="$(cat ~/app/tests/output/output.txt) notify-job-failure.sh
+      - store_test_results:
+          path: ~/app/tests/output
+      - store_artifacts:
+          path: ~/app/tests/output
+
+  push:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: activate-gcloud-account.sh
+      - run: gcloud auth configure-docker
+      - run: CIRCLE_BUILD_NUM=build-$(cat /tmp/workspace/var/circle_build_num) make tag
+      - run: CIRCLE_BUILD_NUM=build-$(cat /tmp/workspace/var/circle_build_num) make push
+      - run:
+          name: Notify failure
+          when: on_fail
+          command: TYPE="Push" notify-job-failure.sh
+
 workflows:
   version: 2
   branch:
     jobs:
-      - build-test-push:
+      - build:
           context: org-global
           filters:
             branches:
               ignore: master
             tags:
               only: /.*/
-      # - test:
-      #     context: org-global
-      #     requires:
-      #       - build
-      #     filters:
-      #       tags:
-      #         only: /.*/
-      # - push:
-      #     context: org-global
-      #     filters:
-      #       tags:
-      #         only: /.*/
+      - test:
+          context: org-global
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+      - push:
+          context: org-global
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
   # tag:
   #   jobs:
   #     - build-test-push
