@@ -27,9 +27,6 @@ run:
 .PHONY: wait
 wait:
 		time ./wait.sh
-		@echo
-		@echo "*** Site ready at http://www.planet4.test"
-		@echo
 
 .PHONY: config
 config:
@@ -38,6 +35,7 @@ config:
 		docker-compose exec php-fpm wp user create $(PLANET4_USER) noreply@greenpeace.org --role=administrator --user_pass="$(PLANET4_USER_PASS)"
 		docker-compose exec redis redis-cli flushdb
 		@echo
+		@echo "*** Site ready at https://www.planet4.test and http://www.planet4.test"
 		@echo "*** User: $(PLANET4_USER)"
 		@echo "*** Pass: $(PLANET4_USER_PASS)"
 		@echo
