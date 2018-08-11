@@ -26,7 +26,7 @@ run:
 
 .PHONY: wait
 wait:
-		time ./wait.sh
+		./wait.sh
 
 .PHONY: config
 config:
@@ -43,6 +43,6 @@ config:
 .PHONY: test
 test:
 		docker-compose exec test mkdir -p /tmp/test_output
-		time docker-compose exec test vendor/bin/phpunit --log-junit /tmp/test_output/junit.xml -c tests | tee output/output.txt
+		docker-compose exec test vendor/bin/phpunit --log-junit /tmp/test_output/junit.xml -c tests | tee output/output.txt
 		mkdir -p output
 		docker cp tests_test_1:/tmp/test_output/junit.xml output/junit.xml
