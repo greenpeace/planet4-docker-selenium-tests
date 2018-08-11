@@ -10,7 +10,7 @@ services:
       - PLANET4_USER_PASS=${PLANET4_USER_PASS:-u3vsREsvjwo}
 
   redis:
-    image: redis:4-alpine
+    image: redis:4-stretch
     networks:
       - local
 
