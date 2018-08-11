@@ -1,32 +1,9 @@
 version: '3'
 services:
-  traefik:
-    image: traefik:1.6
-    hostname: planet4.test
-    command: --docker --docker.watch
-    networks:
-      local:
-      test:
-        aliases:
-          - www.planet4.test
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.toml:/traefik.toml
-    labels:
-      traefik.backend: "traefik"
-      traefik.frontend.rule: "Host:traefik.${APP_HOSTNAME:-www.planet4.test}"
-      traefik.docker.network: "planet4dockercompose_proxy"
-      traefik.enable: "true"
-
   test:
     image: ${TEST_IMAGE:-gcr.io/planet-4-151612/selenium:latest}
     networks:
-      - test
-    labels:
-      traefik.enable: "false"
+      - local
     environment:
       - PLANET4_URL=${APP_HOSTNAME:-www.planet4.test}
       - PLANET4_USER=${PLANET4_USER:-dev}
@@ -36,8 +13,6 @@ services:
     image: redis:4-alpine
     networks:
       - local
-    labels:
-      traefik.enable: "false"
 
   db:
     image: mysql:5.7
@@ -47,8 +22,6 @@ services:
       - ./persistence/mysql:/var/lib/mysql:cached
     networks:
       - db
-    labels:
-      traefik.enable: "false"
 
   php-fpm:
     image: ${APP_IMAGE:-gcr.io/planet-4-151612/planet4-base-app:develop}
@@ -76,34 +49,30 @@ services:
     env_file:
       - ./app.env
       - ./db.env
-    labels:
-      traefik.enable: "false"
 
   openresty:
     image: ${OPENRESTY_IMAGE:-gcr.io/planet-4-151612/planet4-base-openresty:develop}
+    ports:
+      - "80:80"
+      - "443:443"
     depends_on:
       - php-fpm
       - redis
     networks:
-      - local
+      local:
+        aliases:
+          - www.planet4.test
     environment:
       - APP_ENV=${APP_ENV:-develop}
       - PAGESPEED_ENABLED=${PAGESPEED_ENABLED:-false}
       - APP_HOSTNAME=${APP_HOSTNAME:-www.planet4.test}
       - APP_HOSTPATH=${APP_HOSTPATH:-}
       - SSL_ENABLED=true
-    labels:
-      traefik.backend: "test"
-      traefik.frontend.rule: "Host:${APP_HOSTNAME:-www.planet4.test}"
-      traefik.docker.network: "planet4dockercompose_proxy"
-      traefik.enable: "true"
 
   elasticsearch:
     image: gcr.io/planet-4-151612/elasticsearch:${ELASTICSEARCH_BUILD_TAG:-latest}
     networks:
       - local
-    labels:
-      traefik.enable: "false"
 
 networks:
   local:
