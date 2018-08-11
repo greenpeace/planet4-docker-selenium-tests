@@ -8,16 +8,20 @@ defaults: &defaults
 version: 2
 
 jobs:
-  build-push:
+  build-test-push:
     <<: *defaults
     steps:
       - checkout
       - setup_remote_docker
       - run: activate-gcloud-account.sh
       - run: make build
+      - run: make test
+      - store_test_results:
+          path: ~/app/tests/output
+      - store_artifacts:
+          path: ~/app/tests/output
       - run: gcloud auth configure-docker
       - run: make push
-      - run: TYPE="Build" notify-job-success.sh
       - run:
           name: Notify failure
           when: on_fail
@@ -25,10 +29,27 @@ jobs:
 
 workflows:
   version: 2
-  all:
+  branch:
     jobs:
-      - build-push:
+      - build-test-push:
           context: org-global
           filters:
+            branches:
+              ignore: master
             tags:
               only: /.*/
+      # - test:
+      #     context: org-global
+      #     requires:
+      #       - build
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      # - push:
+      #     context: org-global
+      #     filters:
+      #       tags:
+      #         only: /.*/
+  # tag:
+  #   jobs:
+  #     - build-test-push

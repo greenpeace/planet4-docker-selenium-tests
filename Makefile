@@ -28,16 +28,18 @@ else
 PUSH_LATEST := true
 endif
 
-
 .DEFAULT_GOAL := all
 
-all: build
+all: build test push
 
 build:
 	docker build \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_TAG) \
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM) \
 		.
+
+test:
+	$(MAKE) -C tests all
 
 push: push-tag push-latest
 
