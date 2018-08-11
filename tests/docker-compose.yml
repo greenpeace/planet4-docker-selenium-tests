@@ -35,7 +35,7 @@ services:
     environment:
       - APP_ENV=${APP_ENV:-develop}
       - APP_HOSTNAME=${APP_HOSTNAME:-www.planet4.test}
-      - APP_HOSTPATH=${APP_HOSTPATH:-}
+      # - APP_HOSTPATH=${APP_HOSTPATH:-}
       - NEWRELIC_LICENSE=${NEWRELIC_LICENSE:-false}
       - WP_FORCE_SSL_ADMIN=false
       - WP_SET_OPTIONS_ON_BOOT=true
@@ -64,7 +64,7 @@ services:
       - APP_ENV=${APP_ENV:-develop}
       - PAGESPEED_ENABLED=${PAGESPEED_ENABLED:-false}
       - APP_HOSTNAME=${APP_HOSTNAME:-www.planet4.test}
-      - APP_HOSTPATH=${APP_HOSTPATH:-}
+      # - APP_HOSTPATH=${APP_HOSTPATH:-}
       - SSL_ENABLED=true
 
   elasticsearch:
