@@ -54,8 +54,8 @@ jobs:
           at: /tmp/workspace
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
-      - run: CIRCLE_BUILD_NUM=build-$(cat /tmp/workspace/var/circle_build_num) make tag
-      - run: CIRCLE_BUILD_NUM=build-$(cat /tmp/workspace/var/circle_build_num) make push
+      - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make tag
+      - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make push
       - run:
           name: Notify failure
           when: on_fail
