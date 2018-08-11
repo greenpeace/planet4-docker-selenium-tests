@@ -18,8 +18,6 @@ services:
     image: mysql:5.7
     env_file:
       - ./db.env
-    volumes:
-      - ./persistence/mysql:/var/lib/mysql:cached
     networks:
       - db
 
