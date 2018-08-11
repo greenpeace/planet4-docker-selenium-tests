@@ -11,7 +11,7 @@ success=0
 until [[ $success -ge $threshold ]]
 do
   # Curl to container and expect 'greenpeace' in the response
-  if docker run --network tests_test --rm appropriate/curl -s -k "https://www.planet4.test" | grep -i "greenpeace" > /dev/null
+  if docker run --network tests_local --rm appropriate/curl -s -k "https://www.planet4.test" | grep -q "greenpeace"
   then
     success=$((success+1))
     echo "Success: $success/$threshold"
