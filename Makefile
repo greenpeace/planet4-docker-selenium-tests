@@ -11,6 +11,7 @@ ifeq ($(CIRCLECI),true)
 BUILD_NUM = build-$(CIRCLE_BUILD_NUM)
 BRANCH_NAME ?= $(shell sed 's/$(SED_MATCH)/-/g' <<< "$(CIRCLE_BRANCH)")
 BUILD_TAG ?= $(shell sed 's/$(SED_MATCH)/-/g' <<< "$(CIRCLE_TAG)")
+PUSH := true
 else
 # Not in CircleCI environment, try to set sane defaults
 BUILD_NUM = build-local
@@ -25,7 +26,9 @@ BUILD_TAG := $(BRANCH_NAME)
 else
 # Consider this the new :latest image
 # FIXME: implement build tests before tagging with :latest
+ifeq ($(PUSH),true)
 PUSH_LATEST := true
+endif
 endif
 
 .DEFAULT_GOAL := all
@@ -44,13 +47,13 @@ test:
 push: push-tag push-latest
 
 push-tag:
-	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_TAG)
-	docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM)
+	@if [ "$(PUSH)" = "true" ]; then { \
+		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_TAG); \
+		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM); \
+	} else { echo "Not in CI.. not pushing images"; } fi
 
 push-latest:
-	if [ "$(PUSH_LATEST)" = "true" ]; then { \
+	@if [ "$(PUSH_LATEST)" = "true" ]; then { \
 		docker tag $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM) $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):latest; \
 		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):latest; \
-	}	else { \
-		echo "Not tagged.. skipping latest"; \
-	} fi
+	}	else { echo "Not tagged.. skipping latest"; } fi
