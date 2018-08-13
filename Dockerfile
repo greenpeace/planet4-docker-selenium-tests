@@ -5,6 +5,8 @@ ENV PLANET4_SELENIUM_URL https://github.com/greenpeace/planet4-selenium-tests
 
 USER root
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && apt-get -y install \
     libmcrypt-dev \
     libxml2 \
