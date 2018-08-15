@@ -92,3 +92,6 @@ push-latest:
 		docker tag $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM) $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):latest; \
 		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):latest; \
 	}	else { echo "Not tagged.. skipping latest"; } fi
+
+watch:
+	gulp watch
