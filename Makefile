@@ -41,7 +41,11 @@ endif
 SHELL := /bin/bash
 .DEFAULT_GOAL := all
 
-all: build test push
+all: src build run
+
+src:
+	git clone $(SELENIUM_REPO) -b $(SELENIUM_BRANCH) src
+	pushd src && composer -v --profile install && popd
 
 build:
 	docker build \
