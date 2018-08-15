@@ -1,13 +1,50 @@
 version: '3'
 services:
-  test:
-    image: ${TEST_IMAGE:-gcr.io/planet-4-151612/selenium:latest}
+  selenium:
+    image: ${SELENIUM_IMAGE:-gcr.io/planet-4-151612/selenium:latest}
+    networks:
+      - proxy
+    environment:
+      - P4_DOMAIN=www.planet4.test
+      - P4_USER=test_user
+      - P4_PASS=test_pass
+
+  openresty:
+    image: gcr.io/planet-4-151612/planet4-base-openresty:develop
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - php-fpm
+      - redis
+    environment:
+      - REDIS_FASTCGI_CACHE_ENABLED=true
+    networks:
+      proxy:
+        aliases:
+          - www.planet4.test
+      local:
+
+  php-fpm:
+    image: gcr.io/planet-4-151612/planet4-base-app:develop
+    depends_on:
+      - db
+      - redis
     networks:
       - local
+      - db
     environment:
-      - PLANET4_URL=${APP_HOSTNAME:-www.planet4.test}
-      - PLANET4_USER=${PLANET4_USER:-dev}
-      - PLANET4_USER_PASS=${PLANET4_USER_PASS:-u3vsREsvjwo}
+      - WP_FORCE_SSL_ADMIN=false
+      - WP_SET_OPTIONS_ON_BOOT=true
+      - WP_REDIS_ENABLED=true
+      # - WP_STATELESS_MEDIA_BUCKET=planet-4-docker-selenium-tests
+      # - WP_STATELESS_MEDIA_ENABLED=true
+      # - WP_STATELESS_MEDIA_JSON_KEY
+      # - WP_STATELESS_MEDIA_SERVICE_ACCOUNT
+
+    env_file:
+      - ./app.env
+      - ./db.env
 
   redis:
     image: redis:4-stretch
@@ -21,57 +58,12 @@ services:
     networks:
       - db
 
-  php-fpm:
-    image: ${APP_IMAGE:-gcr.io/planet-4-151612/planet4-base-app:develop}
-    depends_on:
-      - db
-      - redis
-    networks:
-      - local
-      - db
-    dns:
-      - ${DNS_RESOLVER:-1.1.1.1}
-      - ./secrets/wp-stateless-media-key.json:/app/secrets/wp-stateless-media-key.json:ro
-    environment:
-      - APP_ENV=${APP_ENV:-develop}
-      - APP_HOSTNAME=${APP_HOSTNAME:-www.planet4.test}
-      # - APP_HOSTPATH=${APP_HOSTPATH:-}
-      - NEWRELIC_LICENSE=${NEWRELIC_LICENSE:-false}
-      - WP_FORCE_SSL_ADMIN=false
-      - WP_SET_OPTIONS_ON_BOOT=true
-      - WP_REDIS_ENABLED=${WP_REDIS_ENABLED:-true}
-      - WP_SITE_HOME=${APP_HOSTNAME:-www.planet4.test}
-      - WP_SITE_URL=${APP_HOSTNAME:-www.planet4.test}
-      - WP_STATELESS_MEDIA_BUCKET=${APP_HOSTNAME:-test-planet4-dev}
-      - WP_STATELESS_MEDIA_ENABLED=${WP_STATELESS_MEDIA_ENABLED:-true}
-    env_file:
-      - ./app.env
-      - ./db.env
-
-  openresty:
-    image: ${OPENRESTY_IMAGE:-gcr.io/planet-4-151612/planet4-base-openresty:develop}
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - php-fpm
-      - redis
-    networks:
-      local:
-        aliases:
-          - www.planet4.test
-    environment:
-      - APP_ENV=${APP_ENV:-develop}
-      - PAGESPEED_ENABLED=${PAGESPEED_ENABLED:-false}
-      - APP_HOSTNAME=${APP_HOSTNAME:-www.planet4.test}
-      # - APP_HOSTPATH=${APP_HOSTPATH:-}
-      - SSL_ENABLED=true
-
   elasticsearch:
-    image: gcr.io/planet-4-151612/elasticsearch:${ELASTICSEARCH_BUILD_TAG:-latest}
+    image: ${ELASTICSEARCH_IMAGE:-gcr.io/planet-4-151612/elasticsearch:latest}
     networks:
       - local
 
 networks:
+  proxy:
   local:
   db:
