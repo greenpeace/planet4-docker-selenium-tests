@@ -1,7 +1,7 @@
 FROM elgalu/selenium:3.1
-LABEL author=kyriakos.diamantis@greenpeace.org
-
-ENV PLANET4_SELENIUM_URL https://github.com/greenpeace/planet4-selenium-tests
+LABEL \
+  author=kyriakos.diamantis@greenpeace.org \
+  maintainer=raymond.walker@greenpeace.org
 
 USER root
 
