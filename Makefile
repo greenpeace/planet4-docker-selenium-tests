@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 
 BUILD_NAMESPACE ?= gcr.io
 GOOGLE_PROJECT_ID ?= planet-4-151612
@@ -31,6 +30,7 @@ PUSH_LATEST := true
 endif
 endif
 
+SHELL := /bin/bash
 .DEFAULT_GOAL := all
 
 all: build test push
