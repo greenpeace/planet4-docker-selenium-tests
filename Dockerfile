@@ -26,17 +26,29 @@ RUN apt-get update && apt-get -y install \
     curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -OSL https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz && \
     tar xzf dockerize-linux-amd64-v0.6.1.tar.gz && mv dockerize /usr/local/bin && rm dockerize-linux-amd64-v0.6.1.tar.gz
 
-RUN echo "root:secret" | chpasswd
-RUN git clone $PLANET4_SELENIUM_URL /var/www/tests
-WORKDIR /var/www/tests
-COPY conf/selenium_config.php /var/www/config.php.example
 COPY bin/entrypoint.sh /entrypoint.sh
-COPY bin/add_test_domain_to_hosts.sh /add_test_domain_to_hosts.sh
-COPY bin/clean_defunct_windows.sh /usr/bin/clean
-RUN chmod 755 /usr/bin/clean && \
-    chown -R seluser:seluser /var/www/tests /entrypoint.sh /add_test_domain_to_hosts.sh /var/www/config.php.example
-USER seluser
-RUN composer install
+COPY bin/add_test_domain_to_hosts.sh /usr/local/bin/add_test_domain_to_hosts.sh
+COPY bin/clean_defunct_windows.sh /usr/local/bin/clean
 
-CMD [ "/entrypoint.sh" ]
 EXPOSE 5900
+
+USER seluser
+
+COPY --chown=seluser:seluser src .
+
+COPY config.php.tmpl /home/seluser/config.php.tmpl
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+
+CMD [ "/usr/bin/entry.sh" ]
+
+ENV \
+  BROWSER="chrome" \
+  EMAIL_PASS="u3vsREsvjwo" \
+  EMAIL_USER="tester.greenwire@gmail.com" \
+  PATH="~/tests/vendor/bin:$PATH" \
+  P4_PASS="u3vsREsvjwo" \
+  P4_PROTO="http" \
+  P4_DOMAIN="www.planet4.test" \
+  P4_USER="dev" \
+  SELENIUM_PORT="24444" \
