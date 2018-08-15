@@ -1,12 +1,25 @@
 #!/bin/bash
 set -e
 
-cd /var/www/tests && git pull origin master
-cp -f /var/www/config.php.example /var/www/tests/config/config.php.example
-sed -i "s|planet4_domain|$PLANET4_URL|" /var/www/tests/config/config.php.example
-sed -i "s|:4444|:24444|" /var/www/tests/config/config.php.example
-sed -i "s|test_user|$PLANET4_USER|" /var/www/tests/config/config.php.example
-sed -i "s|u3vsREsvjwo|$PLANET4_USER_PASS|" /var/www/tests/config/config.php.example
-cp -f /var/www/tests/config/config.php.example /var/www/tests/config/config.php
+echo
+echo "  * Site:  $P4_PROTO://$P4_DOMAIN"
+echo "  * User:  $P4_USER"
+echo "  * Pass:  $P4_PASS"
+echo
 
-/usr/bin/entry.sh
+dockerize --template /home/seluser/config.php.tmpl:/home/seluser/config/config.php
+
+if [[ $P4_DOMAIN =~ test$ ]]
+then
+	echo "Adding host $P4_DOMAIN to hostfile"
+	add_test_domain_to_hosts.sh
+fi
+
+# Upstream container CMD will be /usr/bin/entry.sh
+if [[ "$1" = "/usr/bin/entry.sh" ]]
+then
+	exec /usr/bin/entry.sh
+else
+  # Execute the custom CMD
+	exec /bin/bash -c "$*"
+fi
