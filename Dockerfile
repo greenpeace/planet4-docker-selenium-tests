@@ -9,27 +9,22 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get -y install \
     libmcrypt-dev \
-    libxml2 \
     libxml2-dev \
     php \
     php-cli \
     php-curl \
+    php-json \
     php-mbstring \
     php-mcrypt \
+    php-mysql \
+    php-mysql \
     php-pdo \
-    php-mysql \
-    php-json \
-    php-zip \
-    php-mysql \
     php-xml \
-    curl \
-    git \
-    mysql-client \
-    nano \
-    vim \
-    iputils-ping && \
-    curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/bin/composer
+    php-zip \
+    && \
+    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* && \
+    curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -OSL https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz && \
+    tar xzf dockerize-linux-amd64-v0.6.1.tar.gz && mv dockerize /usr/local/bin && rm dockerize-linux-amd64-v0.6.1.tar.gz
 
 RUN echo "root:secret" | chpasswd
 RUN git clone $PLANET4_SELENIUM_URL /var/www/tests
