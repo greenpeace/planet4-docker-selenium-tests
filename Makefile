@@ -48,6 +48,8 @@ clean:
 	docker-compose -p $(PROJECT) -T -f docker-compose.yml down -v --remove-orphans
 	docker-compose -p tests -f tests/docker-compose.yml down -v --remove-orphans
 
+.PHONY: pull
+pull:
 src:
 	git clone $(SELENIUM_REPO) -b $(SELENIUM_BRANCH) src
 	pushd src && composer -v --profile install && popd
