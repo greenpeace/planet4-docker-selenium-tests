@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 cd /var/www/tests && git pull origin master
 cp -f /var/www/config.php.example /var/www/tests/config/config.php.example
