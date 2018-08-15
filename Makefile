@@ -59,6 +59,20 @@ build:
 		--tag=$(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM) \
 		.
 
+run:
+	docker-compose -p $(PROJECT) up -d
+	# docker run --name $(PROJECT)_selenium -p 5901:25900 -d --rm \
+	#  $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM)
+	docker-compose -p $(PROJECT) exec -T selenium versions
+	docker-compose -p $(PROJECT) exec -T selenium wait_all_done 30s
+	docker-compose -p $(PROJECT) logs selenium
+
+stop:
+	docker-compose -p $(PROJECT) stop
+
+exec:
+	docker-compose -p $(PROJECT) exec -T selenium $(EXEC)
+
 test:
 	$(MAKE) -C tests all
 
