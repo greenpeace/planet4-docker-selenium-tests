@@ -43,6 +43,11 @@ SHELL := /bin/bash
 
 all: src build run
 
+clean:
+	rm -fr src
+	docker-compose -p $(PROJECT) -T -f docker-compose.yml down -v --remove-orphans
+	docker-compose -p tests -f tests/docker-compose.yml down -v --remove-orphans
+
 src:
 	git clone $(SELENIUM_REPO) -b $(SELENIUM_BRANCH) src
 	pushd src && composer -v --profile install && popd
