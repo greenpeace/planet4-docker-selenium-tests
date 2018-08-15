@@ -2,5 +2,7 @@
 .idea
 *.iml
 
+src/
+
 variables.env
 \.DS_Store
