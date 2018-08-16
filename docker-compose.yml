@@ -1,9 +1,12 @@
 version: '3'
 services:
   selenium:
+    privileged: true
     image: ${TEST_IMAGE:-gcr.io/planet-4-151612/selenium:build-local}
     ports:
       - "5901:25900"
+    volumes:
+      - /dev/shm:/dev/shm
     environment:
       - P4_DOMAIN=${P4_DOMAIN:-www.planet4.test}
       - P4_PROTO=${P4_PROTO:-http}
