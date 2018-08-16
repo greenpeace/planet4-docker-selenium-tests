@@ -44,8 +44,8 @@ SHELL := /bin/bash
 all: src build run
 
 clean:
-	docker-compose -p $(PROJECT) -T -f docker-compose.yml down -v --remove-orphans
 	# rm -fr src
+	docker-compose -p $(PROJECT) -f docker-compose.yml down -v --remove-orphans
 	docker-compose -p tests -f tests/docker-compose.yml down -v --remove-orphans
 
 .PHONY: pull
