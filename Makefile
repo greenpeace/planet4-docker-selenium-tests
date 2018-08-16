@@ -39,6 +39,7 @@ endif
 endif
 
 SHELL := /bin/bash
+
 .DEFAULT_GOAL := all
 
 all: src build run
@@ -48,8 +49,6 @@ clean:
 	docker-compose -p $(PROJECT) -f docker-compose.yml down -v --remove-orphans
 	docker-compose -p tests -f tests/docker-compose.yml down -v --remove-orphans
 
-.PHONY: pull
-pull:
 src:
 	git clone $(SELENIUM_REPO) -b $(SELENIUM_BRANCH) src
 	pushd src && composer -v --profile install && popd
@@ -65,7 +64,7 @@ run:
 	#  $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM)
 	docker-compose -p $(PROJECT) exec -T selenium versions
 	docker-compose -p $(PROJECT) exec -T selenium wait_all_done 30s
-	docker-compose -p $(PROJECT) logs selenium
+	docker-compose -p $(PROJECT) logs -f selenium &
 
 stop:
 	docker-compose -p $(PROJECT) stop
@@ -86,7 +85,7 @@ push-tag:
 	@if [ "$(PUSH)" = "true" ]; then { \
 		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_TAG); \
 		docker push $(BUILD_NAMESPACE)/$(GOOGLE_PROJECT_ID)/$(CONTAINER_NAME):$(BUILD_NUM); \
-	} else { echo "Not in CI.. not pushing images"; } fi
+	}	else { echo "Not in CI.. not pushing images"; } fi
 
 push-latest:
 	@if [ "$(PUSH_LATEST)" = "true" ]; then { \
