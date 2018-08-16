@@ -2,6 +2,9 @@ version: '3'
 services:
   selenium:
     image: ${SELENIUM_IMAGE:-gcr.io/planet-4-151612/selenium:latest}
+    privileged: true
+    # ports:
+    #   - 5901:25900
     networks:
       - proxy
     environment:
@@ -11,9 +14,9 @@ services:
 
   openresty:
     image: gcr.io/planet-4-151612/planet4-base-openresty:develop
-    ports:
-      - "80:80"
-      - "443:443"
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
     depends_on:
       - php-fpm
       - redis
