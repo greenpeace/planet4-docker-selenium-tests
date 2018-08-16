@@ -10,6 +10,7 @@ services:
       - ./src/tests:/home/seluser/tests
       - /dev/shm:/dev/shm
     environment:
+      - DEBUG=true
       - P4_DOMAIN=${P4_DOMAIN:-www.planet4.test}
       - P4_PROTO=${P4_PROTO:-http}
       - P4_USER=${P4_USER:-dev}
