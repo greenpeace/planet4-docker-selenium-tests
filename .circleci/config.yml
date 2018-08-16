@@ -14,6 +14,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: mkdir -p /tmp/workspace/var
+      - run: make src
       - run: make build
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
