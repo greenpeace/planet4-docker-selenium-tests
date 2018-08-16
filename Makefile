@@ -71,6 +71,7 @@ stop:
 	docker-compose -p $(PROJECT) stop
 
 exec:
+	docker-compose -p $(PROJECT) exec -T selenium clean
 	docker-compose -p $(PROJECT) exec -T selenium $(EXEC)
 
 test:
