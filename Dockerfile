@@ -36,7 +36,7 @@ USER seluser
 
 COPY --chown=seluser:seluser src .
 
-COPY config.php.tmpl /home/seluser/config.php.tmpl
+COPY config.php.tmpl /home/seluser/config/config.php.tmpl
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 
