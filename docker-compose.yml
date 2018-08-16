@@ -7,6 +7,7 @@ services:
       - "4444:24444"
       - "5901:25900"
     volumes:
+      - ./src/tests:/home/seluser/tests
       - /dev/shm:/dev/shm
     environment:
       - P4_DOMAIN=${P4_DOMAIN:-www.planet4.test}
