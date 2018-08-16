@@ -7,10 +7,7 @@ var saneWatch = require('gulp-sane-watch')
 
 gulp.task('default', () => {
   saneWatch('src/tests/**/*.php', function (file,path) {
-    console.log(file,path)
-    let f = path.replace(__dirname + '/src/','') + "/" + file;
-
-    var make = exec('make exec EXEC="vendor/bin/phpunit --debug -v ' + f + '"')
+    const make = exec('make exec EXEC="vendor/bin/phpunit --debug -v ' +  path.replace(__dirname + '/src/','') + "/" + file + '"')
 
     make.stdout.on('data', (data) => {
       process.stdout.write(`${data}`)
@@ -28,5 +25,5 @@ gulp.task('default', () => {
 });
 
 gulp.task('clean', () => {
-  var make = spawn('make', ['run'])
+  spawn('make', ['run'])
 })
