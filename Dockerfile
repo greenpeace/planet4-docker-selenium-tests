@@ -1,4 +1,4 @@
-FROM elgalu/selenium:3.1
+FROM elgalu/selenium:3
 LABEL \
   author=kyriakos.diamantis@greenpeace.org \
   maintainer=raymond.walker@greenpeace.org
