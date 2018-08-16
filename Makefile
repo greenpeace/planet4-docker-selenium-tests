@@ -4,7 +4,7 @@ PROJECT := p4
 SELENIUM_REPO 	?= https://github.com/greenpeace/planet4-selenium-tests
 SELENIUM_BRANCH ?= master
 
-EXEC ?= vendor/bin/phpunit --stop-on-failure -c tests
+EXEC ?= vendor/bin/phpunit --debug -c tests
 
 BUILD_NAMESPACE 	?= gcr.io
 GOOGLE_PROJECT_ID ?= planet-4-151612
