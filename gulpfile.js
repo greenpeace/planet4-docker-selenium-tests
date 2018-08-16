@@ -1,25 +1,32 @@
-var gulp = require('gulp');
-var watch = require('gulp-watch');
-var spawn = require('child_process').spawn;
+var gulp = require('gulp')
 
-gulp.task('default', ['watch']);
+var exec = require('child_process').exec
+var phplint = require('gulp-phplint');
+var spawn = require('child_process').spawnSync
+var saneWatch = require('gulp-sane-watch')
 
-gulp.task('watch', function () {
-  return gulp.watch('src/**/*.php', ['make'])
+gulp.task('default', () => {
+  saneWatch('src/tests/**/*.php', function (file,path) {
+    console.log(file,path)
+    let f = path.replace(__dirname + '/src/','') + "/" + file;
+
+    var make = exec('make exec EXEC="vendor/bin/phpunit --debug -v ' + f + '"')
+
+    make.stdout.on('data', (data) => {
+      process.stdout.write(`${data}`)
+    })
+
+    make.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
+    make.on('close', (code) => {
+      console.log(`child process exited with code ${code}`)
+      // gulp.start('clean')
+    })
+  });
 });
 
-gulp.task('make', function () {
-  var make=spawn('make', ['build', 'run', 'exec'])
-
-  make.stdout.on('data', (data) => {
-    process.stdout.write(`${data}`);
-  });
-
-  make.stderr.on('data', (data) => {
-    console.log(`stderr: ${data}`);
-  });
-
-  make.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
-});
+gulp.task('clean', () => {
+  var make = spawn('make', ['run'])
+})

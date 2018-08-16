@@ -9,6 +9,8 @@
   "dependencies": {},
   "devDependencies": {
     "child_process": "^1.0.2",
+    "gulp-phplint": "^0.9.0",
+    "gulp-sane-watch": "^2.0.6",
     "gulp-watch": "^5.0.1"
   },
   "scripts": {
