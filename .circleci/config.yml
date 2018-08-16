@@ -55,6 +55,7 @@ jobs:
           at: /tmp/workspace
       - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
+      - run: docker pull gcr.io/${GOOGLE_PROJECT_ID}/selenium:build-$(cat /tmp/workspace/var/circle_build_num)
       - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make tag
       - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make push
       - run: TYPE="Push" notify-job-success.sh

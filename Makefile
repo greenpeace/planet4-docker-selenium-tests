@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 
 PROJECT := p4
 
@@ -38,7 +39,6 @@ PUSH_LATEST := true
 endif
 endif
 
-SHELL := /bin/bash
 
 .DEFAULT_GOAL := all
 
