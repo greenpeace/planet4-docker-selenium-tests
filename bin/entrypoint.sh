@@ -10,7 +10,7 @@ then
 	echo "  * Pass:  $P4_PASS"
 	echo
 
-	if [[ $P4_DOMAIN =~ test$ ]]
+	if [[ $P4_DOMAIN =~ test$ ]] && [[ $P4_SKIP_HOSTS_ENTRY != "true" ]]
 	then
 		echo "Adding host $P4_DOMAIN to hostfile"
 		add_test_domain_to_hosts.sh

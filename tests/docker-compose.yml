@@ -11,6 +11,8 @@ services:
       - P4_DOMAIN=www.planet4.test
       - P4_USER=test_user
       - P4_PASS=test_pass
+      # the openresty network alias means we don't need hosts entry
+      - P4_SKIP_HOSTS_ENTRY=true
 
   openresty:
     image: gcr.io/planet-4-151612/planet4-base-openresty:develop
