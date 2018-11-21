@@ -3,7 +3,7 @@ SHELL := /bin/bash
 PROJECT := p4
 
 SELENIUM_REPO 	?= https://github.com/greenpeace/planet4-selenium-tests
-SELENIUM_BRANCH ?= master
+SELENIUM_BRANCH ?= 2497-refactor-tests
 
 EXEC ?= vendor/bin/phpunit --debug -c tests
 
