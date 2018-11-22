@@ -1,0 +1,85 @@
+{
+  "engines": {
+    "default": {
+      "post": {
+        "enabled": true,
+        "weights": {
+          "tax": {
+            "category": 0,
+            "post_tag": 0,
+            "post_format": 0,
+            "p4-page-type": 0
+          },
+          "title": 80,
+          "content": 5,
+          "excerpt": 40,
+          "slug": 60,
+          "comment": 1
+        },
+        "options": {
+          "exclude": "",
+          "attribute_to": "0",
+          "parent": "0",
+          "stem": "0"
+        }
+      },
+      "page": {
+        "enabled": true,
+        "weights": {
+          "tax": {
+            "category": 0,
+            "post_tag": 0
+          },
+          "title": 80,
+          "content": 5,
+          "excerpt": 40,
+          "slug": 60,
+          "comment": 1
+        },
+        "options": {
+          "exclude": "",
+          "attribute_to": "0",
+          "parent": "0",
+          "stem": "0"
+        }
+      },
+      "attachment": {
+        "enabled": false,
+        "weights": {
+          "cf": [],
+          "tax": [],
+          "title": 80,
+          "content": 5,
+          "excerpt": 40,
+          "slug": 60,
+          "comment": 0
+        },
+        "options": {
+          "exclude": "",
+          "attribute_to": "0",
+          "parent": "0",
+          "stem": "0"
+        }
+      }
+    }
+  },
+  "activated": true,
+  "dismissed": {
+    "filter_conflicts": [],
+    "nags": []
+  },
+  "notices": [],
+  "valid_db_environment": true,
+  "ignored_queries": false,
+  "remote": false,
+  "remote_meta": false,
+  "nuke_on_delete": false,
+  "initial_settings": true,
+  "stats": [],
+  "legacy_engines": false,
+  "index_dirty": false,
+  "initial_index_built": false,
+  "running": false,
+  "utf8mb4": "1",
+  "endpoint": ""
+}

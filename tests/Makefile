@@ -39,6 +39,8 @@ config:
 		docker-compose exec php-fpm wp option set rt_wp_nginx_helper_options '$(NGINX_HELPER_JSON)' --format=json
 		@echo "Setting p4 options ..."
 		docker-compose exec -T php-fpm wp option update planet4_options --format=json < options/planet4_options.json
+		@echo "Setting searchwp options ..."
+		docker-compose exec -T php-fpm wp option update searchwp_settings --format=json < options/searchwp_settings.json
 		@echo "Creating test_user ..."
 		docker-compose exec php-fpm wp user create test_user noreply@greenpeace.org --role=administrator --user_pass="test_pass"
 		@echo "Creating terms ..."
