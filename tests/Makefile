@@ -43,8 +43,8 @@ config:
 		docker-compose exec php-fpm wp user create test_user noreply@greenpeace.org --role=administrator --user_pass="test_pass"
 		@echo "Creating terms ..."
 		docker-compose exec -T php-fpm bash < wp_terms.sh
-		@echo "Creating a few posts ..."
-		docker-compose exec -T php-fpm bash < wp_posts.sh
+		@echo "Creating some content ..."
+		docker-compose exec -T php-fpm bash < wp_content.sh
 		@echo "Copying images ..."
 		docker cp $(shell docker-compose ps -q selenium):/home/seluser/tests/data/images /tmp/images
 		docker cp /tmp/images $(shell docker-compose ps -q php-fpm):/images
