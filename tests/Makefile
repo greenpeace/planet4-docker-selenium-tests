@@ -37,8 +37,17 @@ config:
 		docker-compose exec php-fpm wp rewrite structure /%category%/%post_id%/%postname%/
 		@echo "Configuring nginx-helper redis cache options ..."
 		docker-compose exec php-fpm wp option set rt_wp_nginx_helper_options '$(NGINX_HELPER_JSON)' --format=json
+		@echo "Setting p4 options ..."
+		docker-compose exec -T php-fpm wp option update planet4_options --format=json < options/planet4_options.json
 		@echo "Creating test_user ..."
 		docker-compose exec php-fpm wp user create test_user noreply@greenpeace.org --role=administrator --user_pass="test_pass"
+		@echo "Creating terms ..."
+		docker-compose exec -T php-fpm bash < wp_terms.sh
+		@echo "Creating a few posts ..."
+		docker-compose exec -T php-fpm bash < wp_posts.sh
+		@echo "Copying images ..."
+		docker cp ../src/tests/data/images $(shell docker-compose ps -q php-fpm):/images
+		docker-compose exec php-fpm sh -c 'wp media import /images/*'
 		@echo "Flushing redis cache ..."
 		docker-compose exec redis redis-cli flushdb
 
