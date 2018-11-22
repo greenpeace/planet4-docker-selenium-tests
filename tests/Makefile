@@ -50,11 +50,11 @@ test-all:
 		docker-compose exec selenium mkdir -p /tmp/test_output
 		docker-compose exec selenium vendor/bin/phpunit --log-junit /tmp/test_output/junit.xml -c tests | tee output/output.txt
 		mkdir -p output
-		docker cp tests_selenium_1:/tmp/test_output/junit.xml output/junit.xml
+		docker cp $(shell docker-compose ps -q selenium):/tmp/test_output/junit.xml output/junit.xml
 
 .PHONY: test-exit-early
 test-exit-early:
 		docker-compose exec selenium mkdir -p /tmp/test_output
 		docker-compose exec selenium vendor/bin/phpunit --stop-on-failure --log-junit /tmp/test_output/junit.xml -c tests | tee output/output.txt
 		mkdir -p output
-		docker cp tests_selenium_1:/tmp/test_output/junit.xml output/junit.xml
+		docker cp $(shell docker-compose ps -q selenium):/tmp/test_output/junit.xml output/junit.xml
