@@ -22,6 +22,8 @@ services:
     depends_on:
       - php-fpm
       - redis
+    volumes:
+      - uploads:/app/source/public/wp-content/uploads
     environment:
       - REDIS_FASTCGI_CACHE_ENABLED=true
     networks:
@@ -38,6 +40,8 @@ services:
     networks:
       - local
       - db
+    volumes:
+      - uploads:/app/source/public/wp-content/uploads
     environment:
       - WP_FORCE_SSL_ADMIN=false
       - WP_SET_OPTIONS_ON_BOOT=true
@@ -72,3 +76,6 @@ networks:
   proxy:
   local:
   db:
+
+volumes:
+  uploads:
