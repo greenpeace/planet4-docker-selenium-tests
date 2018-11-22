@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Notify failure
           when: on_fail
-          command: TYPE="Test" EXTRA_TEXT="$(cat ~/app/tests/output/output.txt) notify-job-failure.sh
+          command: TYPE="Test" EXTRA_TEXT="$(cat ~/app/tests/output/output.txt)" notify-job-failure.sh
       - store_test_results:
           path: ~/app/tests/output
       - store_artifacts:
