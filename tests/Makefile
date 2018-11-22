@@ -46,7 +46,8 @@ config:
 		@echo "Creating a few posts ..."
 		docker-compose exec -T php-fpm bash < wp_posts.sh
 		@echo "Copying images ..."
-		docker cp ../src/tests/data/images $(shell docker-compose ps -q php-fpm):/images
+		docker cp $(shell docker-compose ps -q selenium):/home/seluser/tests/data/images /tmp/images
+		docker cp /tmp/images $(shell docker-compose ps -q php-fpm):/images
 		docker-compose exec php-fpm sh -c 'wp media import /images/*'
 		@echo "Flushing redis cache ..."
 		docker-compose exec redis redis-cli flushdb
