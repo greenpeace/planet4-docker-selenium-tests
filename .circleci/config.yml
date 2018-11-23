@@ -8,27 +8,97 @@ defaults: &defaults
 version: 2
 
 jobs:
-  build-push:
+  build:
     <<: *defaults
     steps:
       - checkout
       - setup_remote_docker
-      - run: activate-gcloud-account.sh
+      - run: mkdir -p /tmp/workspace/var
+      - run: make src
       - run: make build
+      - run: activate-gcloud-account.sh
       - run: gcloud auth configure-docker
-      - run: make push
-      - run: TYPE="Build" notify-job-success.sh
+      - run: docker push gcr.io/planet-4-151612/selenium:build-$CIRCLE_BUILD_NUM
+      - run: echo "$CIRCLE_BUILD_NUM" > /tmp/workspace/var/circle_build_num
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - var
       - run:
           name: Notify failure
           when: on_fail
           command: notify-job-failure.sh
 
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make test
+      - run:
+          name: Notify failure
+          when: on_fail
+          command: TYPE="Test" EXTRA_TEXT="$(cat ~/app/tests/output/output.txt)" notify-job-failure.sh
+      - store_test_results:
+          path: ~/app/tests/output
+      - store_artifacts:
+          path: ~/app/tests/output
+
+  push:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: activate-gcloud-account.sh
+      - run: gcloud auth configure-docker
+      - run: docker pull gcr.io/${GOOGLE_PROJECT_ID}/selenium:build-$(cat /tmp/workspace/var/circle_build_num)
+      - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make tag
+      - run: CIRCLE_BUILD_NUM=$(cat /tmp/workspace/var/circle_build_num) make push
+      - run: TYPE="Push" notify-job-success.sh
+      - run:
+          name: Notify failure
+          when: on_fail
+          command: TYPE="Push" notify-job-failure.sh
+
 workflows:
   version: 2
-  all:
+  branch:
     jobs:
-      - build-push:
+      - build:
           context: org-global
+          filters:
+            branches:
+              ignore: master
+            tags:
+              only: /.*/
+      - test:
+          context: org-global
+          requires:
+            - build
           filters:
             tags:
               only: /.*/
+      - push:
+          context: org-global
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - test
+  # tag:
+  #   jobs:
+  #     - build-test-push

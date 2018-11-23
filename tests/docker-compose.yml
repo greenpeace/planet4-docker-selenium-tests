@@ -1,0 +1,81 @@
+version: '3'
+services:
+  selenium:
+    image: ${SELENIUM_IMAGE:-gcr.io/planet-4-151612/selenium:latest}
+    privileged: true
+    # ports:
+    #   - 5901:25900
+    networks:
+      - proxy
+    environment:
+      - P4_DOMAIN=www.planet4.test
+      - P4_USER=test_user
+      - P4_PASS=test_pass
+      # the openresty network alias means we don't need hosts entry
+      - P4_SKIP_HOSTS_ENTRY=true
+
+  openresty:
+    image: gcr.io/planet-4-151612/planet4-base-openresty:develop
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
+    depends_on:
+      - php-fpm
+      - redis
+    volumes:
+      - uploads:/app/source/public/wp-content/uploads
+    environment:
+      - REDIS_FASTCGI_CACHE_ENABLED=true
+    networks:
+      proxy:
+        aliases:
+          - www.planet4.test
+      local:
+
+  php-fpm:
+    image: gcr.io/planet-4-151612/planet4-base-app:develop
+    depends_on:
+      - db
+      - redis
+    networks:
+      - local
+      - db
+    volumes:
+      - uploads:/app/source/public/wp-content/uploads
+    environment:
+      - WP_FORCE_SSL_ADMIN=false
+      - WP_SET_OPTIONS_ON_BOOT=true
+      - WP_REDIS_ENABLED=true
+      # - WP_STATELESS_MEDIA_BUCKET=planet-4-docker-selenium-tests
+      # - WP_STATELESS_MEDIA_ENABLED=true
+      # - WP_STATELESS_MEDIA_JSON_KEY
+      # - WP_STATELESS_MEDIA_SERVICE_ACCOUNT
+
+    env_file:
+      - ./app.env
+      - ./db.env
+
+  redis:
+    image: redis:4-stretch
+    networks:
+      - local
+
+  db:
+    image: mysql:5.7
+    env_file:
+      - ./db.env
+    networks:
+      - db
+
+  elasticsearch:
+    image: ${ELASTICSEARCH_IMAGE:-gcr.io/planet-4-151612/elasticsearch:latest}
+    networks:
+      - local
+
+networks:
+  proxy:
+  local:
+  db:
+
+volumes:
+  uploads:

@@ -17,76 +17,88 @@ The image is based on [elgalu/selenium](https://github.com/elgalu/docker-seleniu
 
 Requirements for running this testing environment:
 
-  * [install docker](https://docs.docker.com/engine/installation/)
+  * [docker](https://docs.docker.com/engine/installation/)
+  * [docker-compose](https://docs.docker.com/engine/installation/)
+  * [make](https://www.gnu.org/software/make/)
 
-### Running planet4 selenium tests in docker container
+Optionally
 
+### Quickstart
+Assuming a [Planet4 docker-compose environment](https://github.com/greenpeace/planet4-docker-compose) is accessible at `http://www.planet4.test`:
 
-1. Clone this repo
-    ```bash
-      $ git clone https://github.com/greenpeace/planet4-docker-selenium-tests
-      $ cd planet4-docker-selenium-tests
+```bash
+# Clone this repo
+git clone https://github.com/greenpeace/planet4-docker-selenium-tests
+cd planet4-docker-selenium-tests
+
+# Start Selenium grid
+make
+
+# Execute tests
+make exec
+```
+
+### Development
+1. Clone the source files from https://github.com/greenpeace/planet4-selenium-tests
+   ```bash
+      make src
     ```
-1. Copy the file variables.env.example to variables.env
+1. Build the image
     ```bash
-      $ cp variables.env.example variables.env
+      make build
     ```
-1. In variables.env change the variables to match the site you want to test.
-1. Build the image.
+1. Start the container
     ```bash
-      $ docker build -t planet4-selenium-tests .
+      # Defaults
+      make run
     ```
-1. You can run the container with either of the below 2 commands.<br> 
-1st option will clone repo inside the container. <br>
-2nd will mount the planet4-selenium-tests from your os. You have to change /path/to/local/planet4-selenium-tests to the path of your local planet4-selenium-tests repo.<br>
-Use 2nd option if you want to be able to edit the repo's files from your os.<br>
-The container will be destroyed after it is stopped.
+    See `docker-compose.yml` for customisations. For example, to change the host, username and password for authenticating
     ```bash
-      #1st option
-      $ docker run --rm --shm-size=2g --name planet4-tests -p 5901:25900   --env-file variables.env  planet4-selenium-tests
-      #2nd option
-      $ docker run --rm --shm-size=2g --name planet4-tests -p 5901:25900   --env-file variables.env  -v /path/to/local/planet4-selenium-tests:/var/www/tests:rw planet4-selenium-tests
-    ```      
-1. Connect to the container.
-    ```bash
-      $ docker container exec -it planet4-tests bash       
+    P4_DOMAIN=k8s.p4.greenpeace.org P4_USER=test P4_PASS=test_pass make run
     ```
-1. If the planet4 installation you want to test runs on your local system/os then also run the below command (inside the container).
+1. Run tests using the provided `make exec` command:
     ```bash
-      $ /add_test_domain_to_hosts.sh       
-    ```  
-1. Inside the container your can run the phpunit tests.
-    ```bash
-      $ ./run_all_sample.sh # to run all tests
-      $ vendor/bin/phpunit -c tests  # to run all tests   
-      $ vendor/bin/phpunit tests/p4/Articles.php   # to run a single test
+      # Run all tests
+      make exec
+      # or
+      docker exec p4_selenium_1 vendor/bin/phpunit -c tests
+
+      # Run only a single test
+      make exec EXEC="vendor/bin/phpunit tests/p4/Articles.php"
+      # or
+      docker exec p4_selenium_1 vendor/bin/phpunit tests/p4/Articles.php
+      # or
+      docker-compose exec selenium vendor/bin/phpunit tests/p4/Articles.php
+
     ```
-1. (Optional) If you need to see the actual browser running the tests, you will need a vnc client. 
+    Or using [gulp](https://gulpjs.com/) to monitor the src/ folder and automatically rerun tests every time a file changes (NodeJS required):
+    ```bash
+      gulp
+    ```
+1. (Optional) If you need to see the actual browser running the tests, you will need a vnc client.
  A choice would be ([RealVnc](https://www.realvnc.com/en/connect/download/vnc/)).
- Download and install the vnc client and then you would be able to connect to the container by specifying the address **127.0.0.1:5900**. 
- The password to connect is **secret** 
-
+ Download and install the vnc client and then you would be able to connect to the container by specifying the address **127.0.0.1:5900**.
+ The password to connect is **secret**
 
 ### Environment variables
 
-There are some variables that should be set for local setup in variables.env file:
+There are some variables that can be configured on container start:
 
-_Url of planet4 site_
-  * PLANET4_URL=test.planet4.dev
-    
-_Admin user_
-  * PLANET4_USER=dev
-    
-_Admin password_
-  * PLANET4_USER_PASS=
-
+VAR        | DEFAULT                    | DESC
+-----------|----------------------------|-----------------------------------------
+P4_DOMAIN  | www.planet4.test           | The domain which is running P4 Wordpress
+P4_PROTO   | https                      | Protocol to connect
+P4_USER    | dev                        | Wordpress administration user
+P4_PASS    | u3vsREsvjwo                | Wordpress administration user
+EMAIL_USER | tester.greenwire@gmail.com |
+EMAIL_PASS | u3vsREsvjwo                |
 
 ### Notes
 If some tests fail, then the browser could remain open and intefere with running any additional test.
 You can run **clean** to close all open browser windows.
     ```bash
       $ clean
-    ```    
+    ```
 
 ## WARNING Windows Users
 

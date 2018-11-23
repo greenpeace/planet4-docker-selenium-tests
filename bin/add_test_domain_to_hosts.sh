@@ -1,5 +1,7 @@
 #!/bin/bash
+set -eu
 
-HOST_IP=$(ip route | awk 'NR==1 {print $3}')
-echo $HOST_IP
-sudo bash -c "echo '$HOST_IP $PLANET4_URL' >> /etc/hosts"
+domain=${1:-$P4_DOMAIN}
+ip=${2:-$(ip route | awk 'NR==1 {print $3}')}
+
+echo "$ip $domain" | sudo tee -a /etc/hosts

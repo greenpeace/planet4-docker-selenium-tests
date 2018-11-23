@@ -1,0 +1,12 @@
+<?php
+
+return array(
+  'host' => 'http://localhost:{{ .Env.SELENIUM_PORT }}/wd/hub',
+  'browser' => '{{ .Env.BROWSER }}',
+  'url'=> '{{ .Env.P4_PROTO }}://{{ .Env.P4_DOMAIN }}',
+  'p4_user' => '{{ .Env.P4_USER }}',
+  'p4_password' => '{{ .Env.P4_PASS }}',
+  'email' => '{{ .Env.EMAIL_USER }}',
+  'email_password' => '{{ .Env.EMAIL_PASS }}',
+  'chromeOptions' => "{args: ['window-size=1366, 996']}"
+);
