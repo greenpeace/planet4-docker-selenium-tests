@@ -64,7 +64,7 @@ make exec
       docker exec p4_selenium_1 vendor/bin/phpunit -c tests
 
       # Run only a single test
-      make exec EXEC="vendor/bin/phpunit tests/p4/Articles.php"
+      make exec EXEC="vendor/bin/phpunit -c tests/phpunit.xml tests/p4/Articles.php"
       # or
       docker exec p4_selenium_1 vendor/bin/phpunit tests/p4/Articles.php
       # or
